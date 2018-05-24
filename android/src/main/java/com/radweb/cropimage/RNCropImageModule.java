@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 public class RNCropImageModule extends ReactContextBaseJavaModule {
 
@@ -64,8 +65,22 @@ public class RNCropImageModule extends ReactContextBaseJavaModule {
 	}
 
 	private File getOutputPath() {
+		String randomName = getSaltString(12);
 		File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		String fileName = String.format("IMG_%s.jpg", new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()));
+		String fileName = String.format("IMG_%s_%s.jpg", new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()), randomName);
 		return new File(String.format("%s%s%s", root.getPath(), File.separator, fileName));
+	}
+
+	private String getSaltString(int length) {
+		String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		StringBuilder salt = new StringBuilder();
+		Random rnd = new Random();
+		while (salt.length() < length) { // length of the random string.
+			int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+			salt.append(SALTCHARS.charAt(index));
+		}
+		String saltStr = salt.toString();
+		return saltStr;
+
 	}
 }
